@@ -1,0 +1,99 @@
+# Rime schema settings
+# encoding: utf-8
+
+schema:
+  schema_id: wlkm
+  name: "王林快码"
+  version: "1.0"
+  author:
+    - 王林快码发明人：王林
+  description: |
+    王林快码
+    按`键临时拼音或者用拼音反查编码
+
+switches:
+  - name: ascii_mode
+    reset: 0
+    states: [ 中文, 西文 ]
+  - name: full_shape
+    states: [ 半角, 全角 ]
+  - name: ascii_punct
+    states: [ 。，, ．， ]
+
+engine:
+  processors:
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - reverse_lookup
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - table_translator
+    - punct_translator
+    - table_translator@custom_userdict
+  filters:
+    - reverse_lookup_filter@pinyin_reverse_lookup
+
+custom_userdict:
+  dictionary: ""
+  user_dict: wlkm_userdict
+  db_class: stabledb
+  enable_completion: false
+  enable_sentence: false
+  initial_quality: -1
+
+speller:
+  alphabet: /;abcdefghijklmnopqrstuvwxyz
+  initials: abcdefghijklmnopqrstuvwxyz
+  delimiter: " "
+  max_code_length: 4
+  auto_select: true
+
+translator:
+  dictionary: wlkm
+  prism: wlkm
+  enable_charset_filter: true
+  enable_encoder: false
+  enable_completion: true
+  enable_sentence: false
+  encode_commit_history: true
+  enable_user_dict: false
+  max_phrase_length: 4
+
+punctuator:
+  import_preset: default
+
+key_binder:
+  import_preset: default
+  bindings:
+    - {accept: comma, send: 2, when: has_menu}
+    - {accept: period, send: 3, when: has_menu}
+
+recognizer:
+  import_preset: default
+  patterns:
+    reverse_lookup: "`[a-z]*;?$"
+
+reverse_lookup:
+  tag: reverse_lookup
+  prefix: "`"
+  suffix: ";"
+  tips: "【反查】"
+  closing_tips: "【王林快码】"
+  extra_tags:
+    - pinyin_lookup
+
+pinyin_reverse_lookup: #該反查濾鏡名
+  tags: [ pinyin_lookup ] #掛在這個tag所對應的翻譯器上
+  overwrite_comment: true
+  dictionary: wlkm
